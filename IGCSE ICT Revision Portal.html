@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IGCSE ICT Revision Portal</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#1c2233;--mute:#5d6682;--acc:#2f5bea;--line:#e2e6f0;--ok:#1f9d63;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12151f;--card:#1b2030;--ink:#e8ebf5;--mute:#9aa3bd;--acc:#7b9bff;--line:#2a3045;--ok:#4cc78e}}
+:root[data-theme="dark"]{--bg:#12151f;--card:#1b2030;--ink:#e8ebf5;--mute:#9aa3bd;--acc:#7b9bff;--line:#2a3045;--ok:#4cc78e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:960px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.6rem;margin:0 0 4px}h2{font-size:1.15rem;margin:28px 0 10px}
+.sub{color:var(--mute);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.big{font-size:1.8rem;font-weight:700}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+input[type=date],input[type=search]{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);max-width:100%}
+input[type=search]{flex:1;min-width:180px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:99px;font:inherit;font-size:.9rem;cursor:pointer}
+.chip.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px}
+.topic{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.topic input{margin-top:5px;width:18px;height:18px;accent-color:var(--ok)}
+.topic.done .t{text-decoration:line-through;color:var(--mute)}
+.tag{font-size:.75rem;color:var(--mute)}
+.res{display:block;text-decoration:none;color:inherit}
+.res:hover{border-color:var(--acc)}
+.res b{color:var(--acc)}
+.res p{margin:4px 0 0;color:var(--mute);font-size:.92rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.note{font-size:.85rem;color:var(--mute);margin-top:24px}
+button.link{background:none;border:0;color:var(--acc);font:inherit;cursor:pointer;padding:0}
+#deck{position:fixed;inset:0;background:var(--bg);z-index:9;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);display:flex;align-items:center;justify-content:center}
+#deck[hidden]{display:none}
+.dk{width:min(760px,100%);padding:20px;display:flex;flex-direction:column;gap:14px;min-height:60vh}
+#dkh{font-size:1.6rem;margin:0}#dkb li{font-size:1.15rem;margin:10px 0}
+.chip:disabled{opacity:.4;cursor:default}
+dl{margin:0}dt{font-weight:600}dd{margin:0 0 6px;color:var(--mute)}
+h4{margin:14px 0 4px;font-size:.95rem}
+.cur{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+details.card{margin-bottom:8px}
+summary{cursor:pointer;font-weight:600}
+details ul{margin:8px 0 0;padding-left:20px;color:var(--mute)}
+details li{margin:3px 0}
+.task{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.task input{margin-top:5px;width:18px;height:18px;accent-color:var(--ok)}
+.task.done b{text-decoration:line-through;color:var(--mute)}
+.task p{margin:2px 0 0;color:var(--mute);font-size:.92rem}
+</style>
+</head>
+<body>
+<main>
+<h1>IGCSE ICT Revision Portal</h1>
+<p class="sub">Cambridge IGCSE Information &amp; Communication Technology (0983 / 0417). Track your topics and find official resources.</p>
+
+<div class="stats">
+ <div class="card"><div class="tag">Exam countdown</div><div class="big" id="days">—</div>
+  <input type="date" id="exam" aria-label="Exam date"></div>
+ <div class="card"><div class="tag">Revision progress</div><div class="big" id="pct">0%</div><div class="bar"><i id="fill"></i></div></div>
+</div>
+
+<h2>12-week revision plan</h2>
+<p class="sub">Set your exam date above to highlight the current week. Tick each week when done.</p>
+<div class="grid" id="planList"></div>
+
+<h2>Resources</h2>
+<div class="row" style="margin-bottom:10px">
+ <input type="search" id="q" placeholder="Search resources and topics…" aria-label="Search">
+</div>
+<div class="chips" id="types" style="margin-bottom:12px"></div>
+<div class="grid" id="resList"></div>
+
+<h2>Topic checklist</h2>
+<div class="chips" style="margin-bottom:12px" id="papers"></div>
+<div class="topics" id="topicList"></div>
+<h2>Topic organisers, questions and slides</h2>
+<p class="sub">Open a topic for its knowledge organiser, practice questions with mark schemes, and a slide deck. Check against the syllabus and your coursebook.</p>
+<div id="notesList"></div>
+
+<h2>Practical tasks</h2>
+<p class="sub">Practise on your own files. Official source files for the coursebook tasks are on Cambridge GO.</p>
+<div class="chips" id="sws" style="margin-bottom:12px"></div>
+<div class="grid" id="taskList"></div>
+
+<p class="note"><button class="link" id="reset">Reset my progress</button> · Progress is saved in this browser only.</p>
+</main>
+
+<div id="deck" hidden><div class="dk"><div class="row" style="justify-content:space-between"><span class="tag" id="dkc"></span><button class="chip" id="dkx">Close</button></div><h2 id="dkh"></h2><div id="dkb"></div><div class="row"><button class="chip" id="dkp">Back</button><button class="chip" id="dkn">Next</button></div></div></div>
+<script>
+// ---- TEACHER: edit these two lists to customise the portal ----
+const RESOURCES=[
+ {t:"Official syllabus (0417)",type:"Syllabus",d:"The definitive list of what can be examined. Start here.",u:"https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-information-and-communication-technology-0417/"},
+ {t:"Past papers & mark schemes",type:"Past papers",d:"Official Cambridge past papers, mark schemes and examiner reports.",u:"https://www.cambridgeinternational.org/programmes-and-qualifications/cambridge-igcse-information-and-communication-technology-0417/past-papers/"},
+ {t:"Cambridge Support Hub",type:"Teaching & learning",d:"Official support materials (login may be required for some items).",u:"https://www.cambridgeinternational.org/support-and-training-for-schools/"},
+ {t:"Class notes (add your link)",type:"Notes",d:"Replace this URL with your shared notes folder.",u:"#"},
+ {t:"Practice tasks (add your link)",type:"Practice",d:"Replace this URL with practical tasks for spreadsheets, databases and web authoring.",u:"#"}
+];
+const TOPICS=[
+ [1,"Types and components of computer systems",1],[2,"Input and output devices",1],[3,"Storage devices and media",1],
+ [4,"Networks and the effects of using them",1],[5,"The effects of using ICT",1],[6,"ICT applications",1],
+ [7,"The systems life cycle",1],[8,"Safety and security",1],[9,"Audience",1],[10,"Communication",1],
+ [11,"File management",2],[12,"Images",2],[13,"Layout",2],[14,"Styles",2],[15,"Proofing",2],
+ [16,"Graphs and charts",2],[17,"Document production",2],[18,"Databases",2],[19,"Presentations",2],
+ [20,"Spreadsheets",3],[21,"Website authoring",3]
+];
+const PAPERS={1:"Theory",2:"Document production, databases, presentations",3:"Spreadsheets & website authoring"};
+const NOTES={
+1:"Hardware is the physical parts; software is the programs (system software like the OS, application software like Word).|CPU processes instructions. RAM is volatile and temporary; ROM is non-volatile and holds start-up instructions.|Analogue data is continuous; digital data is discrete (0s and 1s). An ADC/DAC converts between them.|Know the types of computer (desktop, laptop, tablet, smartphone) and their pros and cons.",
+2:"Input devices: keyboard, mouse, touchscreen, scanner, microphone, webcam, barcode/QR reader, sensors.|Output devices: monitor, printers (inkjet, laser, 3D), speakers, projector, actuators.|For each device, know a use, an advantage and a disadvantage.|Sensors (temperature, light, pressure) feed data into monitoring and control systems.",
+3:"Magnetic (hard disk, tape), optical (CD, DVD, Blu-ray) and solid-state (SSD, USB flash, memory card) storage.|Compare capacity, speed, portability, durability and cost.|Backups protect against data loss; keep copies in a different location.|Cloud storage is reached over the internet: scalable, but needs a connection and good security.",
+4:"Network types: LAN, WLAN, WAN.|Devices: router, switch, hub, modem, network card, wireless access point.|Internet vs intranet; what a VPN does.|Advantages: shared resources and files, communication. Disadvantages: security risks, malware spreading, reliance on the server.",
+5:"Effects on employment: some jobs lost, new jobs created, retraining needed.|Working patterns: teleworking, flexible hours, online meetings.|Health risks from ICT use (RSI, back and neck pain, eye strain, headaches): know causes and ways to prevent them.|Social and environmental effects, e.g. online shopping and banking, e-waste.",
+6:"Know how ICT is used in communication, data handling, measurement (data logging), control and robotics, modelling and simulation.|Also school management, banking (online banking, ATMs), shopping, medicine, GPS and satnav.|For every application: what ICT does, one benefit, one drawback.",
+7:"Stages: analysis, design, development and testing, implementation, documentation, evaluation.|Analysis fact-finding: observation, interviews, questionnaires, studying documents.|Design: data capture forms, screen layouts, validation rules.|Test with normal, abnormal and extreme data.|Changeover: direct, parallel, phased, pilot, each with pros and cons.|Documentation: technical (for developers) vs user (for end users).",
+8:"Physical safety: trailing cables, overloaded sockets, spilled drinks.|e-safety: protect personal details, use privacy settings, strong passwords.|Threats: hacking, malware, phishing, pharming, spyware.|Protection: firewall, anti-malware, encryption, passwords, biometrics, two-factor authentication.|Data protection laws: why organisations must keep personal data safe.",
+9:"Always consider the audience: age, existing knowledge, needs.|Match language, tone, content and style to the audience.|Copyright: do not copy without permission; credit your sources; know software licence types.",
+10:"Email: to, cc, bcc, attachments, netiquette, spam.|Internet use: effective searching, judging whether a source is reliable.|Communication tools: video conferencing, VoIP, forums, blogs, social networks.|Know what an acceptable use policy covers.",
+11:"Use sensible file and folder names; organise with folders and subfolders.|Know common formats: CSV, RTF, PDF, JPEG, PNG, GIF, MP3, MP4.|Compress files to save space or send faster.|Import and export data between applications; use Save As to keep originals.",
+12:"Crop, resize (keep the aspect ratio), rotate and reflect images.|Resolution and file size trade-off; compression.|Place images correctly and set text wrapping.|Add alt text; respect copyright.",
+13:"Page orientation, size and margins.|Headers, footers, automatic page numbers and fields.|Columns, tables, tab stops, bullets and numbering, alignment.|Layout should be consistent and suit the purpose.",
+14:"Use styles so headings and body text are consistent (font, size, colour, spacing).|A house style keeps documents looking the same across an organisation.|On websites, CSS style sheets do the same job.",
+15:"Spell check and grammar check help but miss real words used wrongly (their/there). Always proofread by eye.|Validation checks data is reasonable; verification checks it was entered correctly (double entry, visual check).|Compare against the source or question.",
+16:"Choose the right chart: bar to compare, line for trends, pie for proportions.|Always add a title, axis labels and a legend where needed.|Make sure the chart data range is correct and the chart is readable.",
+17:"Mail merge: master document + data source + merge fields.|Use templates, tables, headers and footers.|Format text accurately: alignment, line spacing, bullets.|Follow every instruction in the task exactly.",
+18:"Table, record, field, primary key.|Data types: text, number, date/time, Boolean, currency.|Validation rules, input masks, lookup lists.|Queries: search criteria, AND/OR, wildcards, sorting, calculated fields.|Forms for entry, reports for output.",
+19:"Use a master slide for consistent layout, fonts and logo.|Short bullet points, readable text, suitable images.|Transitions, animations, hyperlinks, speaker notes.|Check the presentation suits the audience.",
+20:"Formulas and functions: SUM, AVERAGE, MIN, MAX, COUNT, IF, ROUND, lookups (check which ones your syllabus lists).|Relative vs absolute cell references.|Format cells (currency, percent, decimals); sort and filter; charts.|Know how to show formulas and print setup.",
+21:"HTML structure: html, head, title, body.|Common tags: h1-h6, p, a, img (with alt), ul/ol/li, table.|Link types: internal, external, email, anchors.|CSS: external style sheet, classes, ids, colours, fonts, table borders.|Test pages in a browser and keep navigation consistent."
+};
+const KEYS={
+1:"CPU=Processes instructions and data|RAM=Volatile memory holding programs and data in use|ROM=Non-volatile memory holding start-up instructions|Operating system=System software that manages hardware and runs applications",
+2:"Sensor=Measures a physical quantity such as temperature|Touchscreen=Screen that is both an input and output device|Actuator=Output device that causes movement, e.g. a motor|Barcode reader=Reads the lines of a barcode using light",
+3:"SSD=Solid-state drive with no moving parts|Backup=Copy of data kept in case the original is lost|Capacity=Amount of data a device can store|Cloud storage=Storing data on remote servers over the internet",
+4:"LAN=Network covering a small area such as a school|WAN=Network covering a large area, e.g. the internet|Router=Sends data between networks|NIC=Network interface card that lets a computer join a network",
+5:"Teleworking=Working from home using ICT|RSI=Repetitive strain injury from repeated movements|Eye strain=Tired eyes from long screen use|Microprocessor-controlled device=Appliance with a processor, e.g. a washing machine",
+6:"Data logging=Automatically collecting sensor data over time|Simulation=Computer model used to predict how a system behaves|Expert system=Gives advice using a knowledge base and rules|GPS=Satellite system that finds a device's location",
+7:"Analysis=Studies the current system and defines requirements|Design=Plans inputs, outputs and screens|Pilot changeover=New system tried in one part of the organisation first|Evaluation=Checks the system meets requirements",
+8:"Phishing=Fake emails that trick users into giving personal details|Firewall=Blocks unauthorised network traffic|Encryption=Scrambles data so it cannot be read without a key|Two-factor authentication=Needs two proofs of identity to log in",
+9:"Audience=The people a document or presentation is made for|Copyright=Legal protection for the creator of a work|Acknowledge=Give credit to the source of material|Licence=Permission to use software under set conditions",
+10:"Netiquette=Polite and respectful online behaviour|Cc=Sends a visible copy of an email to another person|Bcc=Sends a hidden copy of an email|VoIP=Making voice calls over the internet",
+11:"File extension=Letters after the dot showing the file type|Compression=Making a file smaller|CSV=Plain text file with values separated by commas|RTF=Text format that many programs can open",
+12:"Resolution=Number of pixels in an image, affecting quality|Aspect ratio=Relationship between an image's width and height|Crop=Remove unwanted parts of an image|Alt text=Description shown if an image cannot be seen",
+13:"Margin=Blank space between text and the page edge|Header=Text at the top of every page|Tab stop=Sets where text lines up when Tab is pressed|Orientation=Portrait or landscape page layout",
+14:"Style=Saved set of formatting for a type of text|House style=Standard design rules used across an organisation|CSS=Language that controls how a web page looks|Consistency=Using the same formatting throughout",
+15:"Proofreading=Reading carefully to find errors|Validation=Checks that data is reasonable and allowed|Verification=Checks that data was entered correctly|Double entry=Typing data twice and comparing",
+16:"Chart=Visual display of data|Axis=Line on a chart showing scale or categories|Legend=Key explaining colours or series|Data range=Cells chosen to create a chart",
+17:"Mail merge=Combining a template letter with a data source|Merge field=Placeholder replaced by data from a record|Template=Pre-formatted document used as a starting point|Data source=File holding the records to merge",
+18:"Field=One item of data in a record|Record=All the fields about one item or person|Primary key=Field that uniquely identifies each record|Query=Search that selects records using criteria",
+19:"Master slide=Sets the layout for all slides|Transition=Effect when moving between slides|Animation=Movement applied to objects on a slide|Speaker notes=Notes for the presenter, not shown to the audience",
+20:"Cell reference=Address of a cell, such as B4|Absolute reference=Does not change when the formula is copied|Function=Built-in formula such as SUM|Conditional formatting=Formatting that changes depending on the value",
+21:"HTML=Language used to structure a web page|Hyperlink=Clickable link to another page or resource|Style sheet=File with CSS rules shared by pages|Alt attribute=Describes an image for people who cannot see it"
+};
+const QS={
+1:"Describe the difference between RAM and ROM.~2~RAM is volatile but ROM is non-volatile;RAM holds programs and data in use while ROM holds start-up instructions||State two examples of application software.~2~Word processor;Spreadsheet, database, web browser or presentation software (any one more)",
+2:"Give two advantages of using a touchscreen as an input device.~2~Easy to use without extra devices;Fast selection by touching icons;Saves space||Name an input device used to enter paper documents into a computer and state one disadvantage.~2~Scanner;Any one: slow for large documents, file sizes can be large",
+3:"Give two advantages of an SSD compared with a hard disk drive.~2~Faster read and write speeds;No moving parts so more durable;Quieter and uses less power||Explain why a company should keep backups.~3~Data can be lost through failure, hacking or accidents;A backup lets the data be restored;Copies should be stored in a different location",
+4:"State two advantages of connecting computers in a network.~2~Share files and resources such as printers;Easy communication;Central backup and security||Describe the purpose of a router.~2~Connects networks together;Sends data to the correct destination",
+5:"Give two health problems from long-term computer use and one way to prevent each.~4~RSI: use a wrist rest or take regular breaks;Back pain: use an adjustable chair with good posture;Eye strain: take breaks and adjust screen brightness||Describe two benefits of teleworking for an employee.~2~No commuting so saves time and money;More flexible hours;Fewer office distractions",
+6:"Describe how data logging is used to monitor temperature in a greenhouse.~3~Sensors measure the temperature;Readings are taken at set intervals and sent to the computer;Data is stored and compared with limits or shown on a graph||State two benefits of using a simulation instead of a real experiment.~2~Safer;Cheaper;Can be repeated or run faster",
+7:"Name the stages of the systems life cycle in order.~6~Analysis;Design;Development and testing;Implementation;Documentation;Evaluation||Describe one advantage and one disadvantage of parallel changeover.~2~Advantage: the old system is available if the new one fails;Disadvantage: takes longer and costs more as both systems run",
+8:"Describe what phishing is and one way to protect against it.~3~Fake email or message pretends to be from a trusted organisation;Tries to get personal or bank details;Protection: do not click links, check the sender or use anti-phishing software||State two ways of keeping data secure on a network.~2~Strong passwords;Firewall;Encryption or anti-malware;Biometrics",
+9:"Explain why content for young children should differ from content for adults.~2~Simpler language and shorter sentences;More images and colour;Age-appropriate content||State two ways to avoid breaking copyright when using images.~2~Get permission from the owner;Use copyright-free images;Credit the source;Create your own",
+10:"State the difference between cc and bcc in an email.~2~Cc recipients are visible to everyone;Bcc recipients are hidden from the others||Give two ways to check that a website is reliable.~2~Check the author or organisation;Check the date;Compare with other sources;Look at the web address",
+11:"Explain why a CSV file is useful when moving data between different software.~2~It is a generic format most software can open;It stores plain data separated by commas||State two reasons for compressing files.~2~Takes up less storage space;Faster to send by email or upload",
+12:"Describe how to resize an image without distorting it.~2~Keep the aspect ratio locked;Change width and height together, or drag a corner handle||Explain the effect of reducing image resolution.~2~Smaller file size;Lower quality, so the image may look blocky",
+13:"State what a footer is and give one example of its use.~2~Text that appears at the bottom of every page;Example: page number or date||Explain why tab stops are better than the space bar for lining up text.~2~They align text accurately;Layout stays consistent when edited",
+14:"Explain why an organisation uses a house style.~2~Documents look consistent and professional;It reinforces the brand||Describe one benefit of using styles in a long document.~2~Change formatting in one place and all text updates;Keeps formatting consistent",
+15:"Explain why a spell check does not find all errors.~2~It only checks words exist in its dictionary;Correctly spelt wrong words, such as their and there, are missed||State the difference between validation and verification.~2~Validation checks data is sensible or allowed;Verification checks data matches what was intended",
+16:"State two features that make a chart easy to understand.~2~Clear title;Labelled axes;Legend where needed||State the best chart type for showing a trend over time and why.~2~Line chart;It shows how values change between points",
+17:"Describe the stages of creating a mail merge.~3~Create the main letter or template;Connect to the data source;Insert merge fields and complete the merge||Give one benefit of using a template.~1~Saves time or keeps documents consistent",
+18:"State what is meant by a primary key.~2~A field in a table;Its value is unique for each record||State two validation checks that can be used on a database field.~2~Range check;Presence check;Type check;Length check",
+19:"Explain why a master slide is used.~2~Gives consistent layout, fonts and logo;Changes made once update every slide||State two features that make a slide easy to read.~2~Short bullet points;Large clear font;Good contrast between text and background",
+20:"State the purpose of an absolute cell reference.~2~It stays fixed when the formula is copied;Example: $B$2||Write a formula to find the average of the values in cells B2 to B10.~1~=AVERAGE(B2:B10)",
+21:"State the HTML tag used to display an image.~1~The img tag||Explain why an external style sheet is useful for a website.~2~One file controls the style of all pages;Changing it once updates every page"
+};
+const mo=n=>MORE[n]||["","",""];
+const MORE={
+1:["The processing cycle is input, processing, output, with storage. The CPU carries out instructions; more cores and a higher clock speed generally make it faster.|Application software does a task for the user (word processor, spreadsheet, database, web browser). System software runs the computer: the operating system, utility software such as antivirus or disk tools, and device drivers.|Types of computer: desktop (powerful, cheap, not portable), laptop (portable, battery powered, harder to upgrade), tablet and smartphone (very portable, touch screen, limited power), mainframe and supercomputer (large organisations, very fast processing).|Analogue signals are continuous and must be converted by an ADC before a computer can process them. A DAC converts digital data back to analogue.","Always give a reason after a device: faster, portable, cheaper. Portable on its own is not enough.|Know the difference between hardware, software, and the types of software.","Calling the hard drive memory. In exams memory means RAM or ROM; the hard drive is storage."],
+2:["Input devices by type: pointing (mouse, touchpad, trackerball), text entry (keyboard, microphone with speech recognition), scanning (scanner, barcode and QR readers, digital camera), sensing (temperature, light, pressure, moisture, sound).|Output devices: screens (LCD and LED), projectors, printers (inkjet is cheap and good for photos; laser is fast and good for high volume; 3D printers build objects layer by layer; dot matrix prints multi-part forms), speakers and actuators.|Choose a device to match the task: touchscreens on kiosks (easy to use, no training, but fingerprints and wear), barcode readers at tills (fast and accurate), microphones for hands-free control.","When asked to describe a use, say what it is used for and where.|For advantages and disadvantages, give a comparison, not just that it is good.","Calling a touchscreen only an input device. It is both an input and an output device."],
+3:["Magnetic: hard disk drives (large capacity, cheap per GB, moving parts) and tape (used for backups). Optical: CD, DVD and Blu-ray use a laser, have low capacity and can scratch. Solid state: SSD, USB flash and memory cards have no moving parts, are fast and robust but cost more per GB.|Capacity is measured in bytes: KB, MB, GB, TB. Compare devices by capacity, speed, portability, durability and cost.|Backups: full or regular scheduled backups, with a copy stored away from the computer (off site or in the cloud) so that fire, theft or ransomware cannot destroy both copies.|Cloud storage keeps files on a provider's servers. Benefits include access from anywhere and automatic backup. Drawbacks include needing internet access and trusting the provider's security.","Use sensible numbers: a DVD holds a few GB, an SSD hundreds of GB or more.|Link each device to a use, for example tape for long-term backups.","Saying the cloud is on the internet with no explanation. Say files are stored on remote servers."],
+4:["Devices: router (connects networks and sends data to the correct destination, linking a LAN to the internet), switch (sends data only to the intended device), hub (sends data to all devices), wireless access point, network interface card, modem.|Wired (Ethernet) is fast, secure and reliable but needs cables. Wireless (Wi-Fi) is flexible and convenient but slower, can suffer interference and is easier to hack without encryption.|The internet is a global network of networks; the world wide web is the pages on it. An intranet is private to an organisation; an extranet gives limited outside access. A VPN creates an encrypted connection across a public network.|Bluetooth is short range, for example connecting headphones. Wi-Fi covers a building and links devices to a network.","Do not mix up the internet and the world wide web.|When comparing wired and wireless, give an advantage and a disadvantage of each.","Saying a router and a modem are the same. A modem connects to the ISP; a router directs data between devices and networks."],
+5:["Employment: automation replaces some manual and routine jobs, creates jobs in design, programming and maintenance, and makes retraining important. Teleworking means working from home using ICT.|Health: RSI from repeated movements (take breaks, use ergonomic equipment); back and neck problems from poor posture (adjustable chair, correct screen height); eye strain and headaches (screen filter, regular breaks, good lighting); an inactive lifestyle.|Microprocessor-controlled devices in the home (washing machines, ovens, security systems) save time and energy and can be controlled remotely, but can make people less active and need power and repairs.|Social effects: online shopping and banking are convenient but cause high street closures and fraud risks. The digital divide is the gap between people with and without access.","For discuss questions give points for and against, then reach a conclusion.|Match each health problem to its cause and a prevention.","Giving only the problem, such as back pain, without a cause or a prevention."],
+6:["Data logging: sensors collect readings automatically at set intervals, an ADC converts them, and the computer stores and processes them. Used in weather stations, science experiments and patient monitoring. It is continuous, accurate and works where it is unsafe or inconvenient for people.|Control: sensors feed the processor, which compares readings with a set value and sends signals to actuators (heaters, motors, valves). Examples: greenhouse heating, central heating, traffic lights.|Modelling and simulation test ideas safely and cheaply, for example flight simulators, crash tests and spreadsheet models that predict profit.|Other applications: banking (ATMs, chip and PIN, online banking), shopping (EPOS and stock control), medicine (patient records, scanners), libraries, school registration systems and GPS navigation.","In control questions describe the role of the sensor, processor and output.|Give a real example for each application.","Saying a sensor controls something. Sensors only detect; the processor decides and actuators act."],
+7:["Analysis: study the current system using observation, interviews, questionnaires and document inspection; identify problems, requirements, inputs, processes and outputs. Design: file structures, data capture forms, screen layouts, output formats and validation rules.|Development and testing: build the system and test with normal data (accepted), abnormal data (rejected) and extreme data (at the limits). Users are trained before the change.|Changeover methods: direct (immediate and risky), parallel (safe but slow and costly), phased (one part at a time), pilot (one location first). Documentation: technical (for developers) and user (instructions and help).|Evaluation compares the new system with the original requirements and looks at user feedback, efficiency and improvements.","Know an advantage and a disadvantage of each changeover method.|Know which documentation is for whom.","Mixing up normal, abnormal and extreme data. Extreme is the highest or lowest valid value."],
+8:["Physical safety: avoid trailing cables, overloaded sockets and liquids near equipment, place heavy equipment on stable surfaces, and use suitable fire extinguishers.|E-safety: do not share personal details, use privacy settings and strong passwords, only meet online friends with an adult, report cyberbullying, and check sites use https.|Threats: hacking, malware (viruses, worms, spyware), phishing (fake emails), pharming (redirecting to fake websites), keylogging, spam and denial of service attacks.|Protection: firewall, anti-malware, encryption, passwords and two-factor authentication, biometrics, access rights, regular updates and backups. Data protection principles say personal data must be accurate, kept secure, used only for its purpose and not kept longer than needed.","Give a threat and then the protection that matches it.|Describe how it works, not just its name: a firewall checks traffic against rules.","Mixing up phishing and pharming. Phishing is a fake message; pharming redirects a real web address to a fake site."],
+9:["Audience: think about age, knowledge and needs. Young children need simple words, large text and pictures; experts can handle technical terms. Purpose affects tone and layout: formal for business, friendly for a poster.|Copyright law protects text, images, music, software and video. You need permission or a licence to copy them. Software licences include single user, multi-user, site and shareware.|Plagiarism is passing off someone else's work as your own. Acknowledge sources and check any usage rules.|Check content is suitable: accurate, up to date, free of offensive material and designed for the people who will use it.","Link each feature to the audience, for example larger text because the audience is elderly.|Give two ways to stay legal: get permission and acknowledge the source.","Thinking an image on the internet is free to use because it is easy to copy."],
+10:["Email: to, cc and bcc, attachments, address books, forwarding, reply all. Spam is unwanted email and can be reduced with filters and by not sharing your address. Netiquette means being polite and clear, not typing in capitals and proofreading before sending.|Searching: use keywords, quotation marks for exact phrases, and refine results. Evaluate websites by author, date, purpose, other sources and web address.|Communication tools: video conferencing (webcam, microphone, speakers, good connection), VoIP, instant messaging, forums, blogs, wikis and social networks.|Security: use strong passwords, do not open attachments from unknown senders, and check links before clicking.","Know what each email field does, not just its name.|When evaluating reliability give at least two checks.","Thinking a website is reliable because it appears high in search results."],
+11:["File types: text (TXT, RTF, CSV), documents (DOCX, PDF), images (JPG for photos, PNG for transparency, GIF for simple animation), audio (MP3), video (MP4), web (HTML, CSS).|Generic formats can be opened by different software, which helps with sharing. Compression reduces file size: lossy removes some data permanently (JPG, MP3); lossless loses nothing (ZIP, PNG).|Good file management: meaningful file names, a logical folder structure, regular backups, and Save As to keep versions.|Importing and exporting: bring data into software, for example CSV into a spreadsheet, or save in another format.","Give a reason for every file type you choose.|Know that PDF keeps layout and is hard to edit.","Saying a ZIP file deletes data. ZIP is lossless; files can be restored exactly."],
+12:["Image editing: crop to remove edges, resize (keep the aspect ratio to avoid distortion), rotate, flip, adjust brightness and contrast, change resolution.|Resolution is the number of pixels; higher resolution gives sharper images and larger files. Use JPG for photographs, PNG for transparency and GIF for simple graphics.|Placing images: set position and text wrapping, add alt text, and make sure you have permission to use the image.|In documents and websites save images in the correct folder and use relative paths.","If a task says without distortion, lock the aspect ratio.|Check the picture is the right size and in the right place.","Resizing by dragging a side handle. It stretches the picture."],
+13:["Page layout: page size and orientation, margins, columns, headers and footers, automatic page numbers, dates and file names.|Text layout: alignment (left, right, centre, justified), line spacing, tab stops, indents, bullets and numbering, text boxes, and tables with correct borders.|Consistency matters: the same layout on every page, content inside the margins and nothing overlapping or hidden.|Automatic fields such as page numbers update themselves and are better than typed text.","Read the task for exact measurements and enter them accurately.|Check every page for text overflow and stray headings.","Typing a page number by hand instead of using an automatic field."],
+14:["A style stores formatting for a type of text: font, size, colour, spacing and alignment. Paragraph styles apply to whole paragraphs; character styles apply to selected text.|Styles give consistent documents, save time, and let you change formatting everywhere by editing the style once.|A house style is an organisation's standard for fonts, colours and layout so all documents look alike.|On web pages CSS does the same job with selectors for elements, classes and ids.","Name styles exactly as given in the task, including capitals.|Check headings use real heading styles.","Formatting every heading by hand rather than defining and applying a style."],
+15:["Proofing checks accuracy. Spell check and grammar check find many errors but not all: a correctly spelt wrong word such as form for from will pass. Read the text yourself and compare with the source.|Validation checks data is sensible when entered: range, type, length, presence, format and check digit. It cannot guarantee that data is correct.|Verification checks data matches the source: visual check (read and compare) and double entry (type twice and compare).|Check numbers, dates, names and layout against the instructions before saving.","State what each validation check does and give an example.|Do not say validation checks data is correct; it checks it is reasonable.","Saying a spell checker finds all errors."],
+16:["Choose the chart for the data: bar or column to compare categories, line to show change over time, pie to show proportions of a whole, scatter to show a relationship between two variables.|Every chart needs a title, labelled axes with units, a legend where there is more than one series, and a suitable scale.|Check the right data range is selected, labels are readable and colours can be told apart when printed.|Charts are made from spreadsheet data and can be placed in documents or presentations.","Say why the chart type suits the data.|Label both axes, not just one.","Using a pie chart for data that does not add up to a whole."],
+17:["Mail merge combines a main document with a data source such as a spreadsheet or database. Merge fields show where each record's data appears. Records can be sorted or filtered so only some letters are produced.|Documents may need tables, columns, headings and consistent styles. Templates give a ready-made layout.|Letters and reports need accuracy: correct spelling, alignment, spacing, fonts and file names.|Save the main document and merged output as instructed, and keep the data source in the same folder.","Insert merge fields with the exact field names.|Preview the results to check every record looks right.","Typing data into the letter instead of inserting merge fields."],
+18:["A flat-file database has one table of records and fields. A relational database links tables using keys. Each record needs a unique primary key; a foreign key links to another table.|Data types: text, integer, decimal, date/time, Boolean (yes/no), currency. Validation rules and input masks control what can be entered. Choose suitable field lengths.|Queries search and sort: criteria, AND, OR, NOT, wildcards, comparison operators (greater than, less than, equals, not equal) and calculated fields such as quantity times price. Save queries with sensible names.|Reports present results: choose fields, grouping, sorting, totals, a title and labels that are fully visible. Forms make data entry and editing easier.","Check field names in a query match the table exactly.|Use print preview to be sure no data is cut off in a report.","Choosing a name or date of birth as a primary key. They are not always unique."],
+19:["Plan slides for the audience and purpose: a clear title, short bullet points, readable fonts and strong contrast. Keep only the key points on each slide.|Use a master slide to set the background, fonts, logo and placeholders. Add images, charts, tables, video or sound where they help.|Effects: transitions between slides and animations on objects should be consistent and not distracting. Hyperlinks and action buttons link slides or external pages.|Speaker notes help the presenter; handouts need the correct layout. Test the slide show before presenting.","Link every design choice to the audience.|Check font, colour and positions are consistent on every slide.","Filling slides with long paragraphs and reading them aloud."],
+20:["Formulas begin with an equals sign. Functions: SUM, AVERAGE, MIN, MAX, COUNT, ROUND, IF with a test, true result and false result, nested IF, lookups and the other functions listed in your syllabus.|Relative references change when copied; absolute references such as $A$1 do not; mixed references fix only the row or the column.|Formatting: number formats (currency, percentage, decimal places), alignment, borders, conditional formatting. Sort and filter data and use data validation for entry rules.|Charts: select the data and add labels. For evidence, show formulas, set the print area and orientation, and use headers and footers.","Check every result looks sensible.|Replicate formulas down correctly and check absolute references.","Typing values instead of cell references, so results do not update when the data changes."],
+21:["HTML structure: html, head (title, link, meta) and body. Content tags: h1 to h6, p, ul, ol, li, table, tr, th, td, img, a, div. Attributes add information: src, alt, href, width, target.|Hyperlinks: to a page in the site, to an external site, to an email address with mailto, and to a bookmark in the same page with a hash name. Target set to _blank opens a new window.|CSS can be inline (style attribute), internal (style tag in the head) or external (a .css file linked from each page). Selectors: element, class (.name) and id (#name). Properties include font-family, font-size, color, background-color, text-align, border and margin.|Good practice: consistent navigation on every page, relative file paths, alt text, descriptive page titles and testing in a browser.","Use exact file names, classes and ids from the task.|Test every link in a browser before finishing.","Using spaces and capital letters in file names, or a drive path such as C: in links."]
+};
+const QS2={
+1:"State two differences between application software and system software.~2~Application software performs tasks for the user while system software manages the computer;Examples: word processor compared with operating system",
+2:"Describe how a barcode reader and a database are used at a shop checkout.~3~The reader scans the barcode and sends the code to the computer;The code is searched for in the product database;The price is returned and the stock level is updated",
+3:"A photographer needs to store 500 GB of photographs and carry them to clients. Recommend a storage device and justify your choice.~3~External SSD or portable hard disk drive;Capacity is large enough for 500 GB;Portable, and an SSD is robust with no moving parts",
+4:"Give two differences between the internet and an intranet.~2~The internet is public while an intranet is private to an organisation;The internet is worldwide while an intranet is limited to its users and is more secure",
+5:"Describe two benefits and one drawback of online shopping for customers.~3~Open at any time and no travelling;Easier to compare prices and read reviews;Drawback: risk of fraud, cannot see goods first, or delivery delays",
+6:"Describe how a computer system controls the temperature in a greenhouse.~4~A temperature sensor measures the temperature;The reading is converted to digital and sent to the processor;The processor compares it with the stored value;If it is too low an output signal switches the heater on or closes vents, and the process repeats",
+7:"A field accepts marks from 0 to 100. Give one example each of normal, abnormal and extreme test data.~3~Normal: a number such as 55;Abnormal: a value that must be rejected such as 150 or text;Extreme: 0 or 100",
+8:"Explain how encryption helps protect data sent over the internet.~3~Data is scrambled so it cannot be understood;Only someone with the correct key can decrypt it;If it is intercepted it cannot be read",
+9:"A poster will be displayed in a primary school. Describe three design features suitable for the audience.~3~Large clear font;Bright colours and pictures;Short simple sentences",
+10:"Describe three things that make an email professional.~3~A clear subject line;Correct spelling, grammar and a polite tone;Only the needed attachments and the right recipients",
+11:"Explain the difference between lossy and lossless compression.~2~Lossy permanently removes some data to make the file smaller;Lossless reduces size without losing data and the original can be restored",
+12:"Explain why an image used on a website should have alternative text.~2~It is displayed if the image cannot be loaded;It is read by screen readers for users with visual impairments",
+13:"Explain why a header or footer is used instead of typing the same text on every page.~2~It is entered once and appears on every page automatically;It saves time and keeps the layout consistent",
+14:"Describe two advantages of using a style sheet on a website.~2~Pages have a consistent appearance;Changing a style once updates every page that uses the style sheet",
+15:"Give three types of validation check and state what each does.~3~Range check: value is between set limits;Presence check: the field is not left empty;Type or length check: data is the right type or length",
+16:"State the best type of chart for (a) sales over 12 months and (b) the share of votes between four parties.~2~(a) Line chart;(b) Pie chart",
+17:"Give two examples of when an organisation would use mail merge.~2~Personalised letters to customers or parents;Name labels, certificates or invoices",
+18:"Explain the difference between a field and a record.~2~A field is one item of data such as a surname;A record is all the fields about one person or item",
+19:"Describe two ways to make a presentation easier to see for an audience with poor eyesight.~2~Use large clear fonts and strong contrast;Avoid small text and busy backgrounds",
+20:"Write a formula for C2 that shows Pass if B2 is 50 or more and Fail otherwise.~2~Uses IF with the test B2>=50;Both results Pass and Fail in quotation marks, for example =IF(B2>=50,\"Pass\",\"Fail\")",
+21:"Describe the difference between an internal and an external style sheet.~2~Internal styles are in the head of one page and affect only that page;External styles are in a separate CSS file linked to many pages"
+};
+const TASKS=[
+{id:1,sw:"Word",lv:"Getting started",t:"Format a school newsletter",d:"A4 portrait, set margins, two columns, heading styles, header/footer with page number field, resized image with text wrapping."},
+{id:2,sw:"Word",lv:"Practice",t:"Mail merge letters",d:"Create a letter template, link a spreadsheet data source, insert merge fields, preview and complete the merge."},
+{id:3,sw:"Word",lv:"Challenge",t:"Styled report",d:"Use styles throughout, add a table with aligned numbers, tab stops and a bullet list, then proofread for errors a spell check misses."},
+{id:4,sw:"Access",lv:"Getting started",t:"Build a student table",d:"Create the table, set a primary key, choose correct data types, add a 0-100 validation rule, import records from a CSV file."},
+{id:5,sw:"Access",lv:"Practice",t:"Write queries",d:"Search with AND/OR and wildcards, sort results, add a calculated field, show only selected fields, save each query."},
+{id:6,sw:"Access",lv:"Challenge",t:"Grouped report",d:"Build a report with title, grouping, totals and labels. Make sure all fields and data are fully visible."},
+{id:7,sw:"PowerPoint",lv:"Getting started",t:"Master slide deck",d:"Set a master slide with logo and fonts, then make 5 slides using short bullet points and one image."},
+{id:8,sw:"PowerPoint",lv:"Practice",t:"Interactive slides",d:"Add a chart from data, transitions, speaker notes and hyperlinks between slides."},
+{id:9,sw:"Excel",lv:"Getting started",t:"Marks spreadsheet",d:"Use SUM, AVERAGE, MIN, MAX; practise relative and absolute references; format cells as numbers and percentages."},
+{id:10,sw:"Excel",lv:"Practice",t:"IF and lookups",d:"Use IF for grade boundaries, a lookup function, conditional formatting; sort and filter the data."},
+{id:11,sw:"Excel",lv:"Challenge",t:"Chart and print setup",d:"Create labelled charts, show formulas view, set page orientation, fit to one page, add header and footer."},
+{id:12,sw:"Web",lv:"Getting started",t:"Two-page website",d:"HTML with headings, paragraphs, an image with alt text and links between both pages."},
+{id:13,sw:"Web",lv:"Practice",t:"Style with CSS",d:"Create an external style sheet with classes and ids; style fonts, colours and a table."},
+{id:14,sw:"Web",lv:"Challenge",t:"Multi-page navigation",d:"Add a consistent nav menu, email link, anchor links; test every page in a browser."}
+];
+// ----------------------------------------------------------------
+const $=id=>document.getElementById(id);
+const PLAN=[
+["Computer systems, devices and storage","Topics 1-3. Practical: Word newsletter task."],
+["Networks and effects of ICT","Topics 4-5. Practical: Word mail merge task."],
+["Applications and the systems life cycle","Topics 6-7. Practical: Excel marks spreadsheet."],
+["Safety, audience and communication","Topics 8-10. Practical: Excel IF and lookups."],
+["Files, images and layout","Topics 11-13. Practical: Access table and queries."],
+["Styles, proofing, graphics and documents","Topics 14-17. Practical: Word styled report."],
+["Databases and presentations","Topics 18-19. Practical: Access report, PowerPoint tasks."],
+["Spreadsheets and website authoring","Topics 20-21. Practical: Excel chart task, web tasks."],
+["Paper 1 theory review","Go through all notes, list weak topics, learn key terms."],
+["Timed Paper 1 practice","Do past Paper 1s under exam time, mark and correct."],
+["Timed practical papers","Do past Papers 2 and 3 under exam time, re-do weak tasks."],
+["Final review","Fix remaining weak spots, light revision, rest well before the exam."]
+];
+let S={done:[],tasks:[],weeks:[],exam:""},typeF="All",paperF=0,swF="All";
+try{S=Object.assign(S,JSON.parse(localStorage.getItem("ictportal")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("ictportal",JSON.stringify(S))}catch(e){}};
+
+function chips(el,items,cur,fn){el.innerHTML="";items.forEach(([v,l])=>{const b=document.createElement("button");b.className="chip"+(v===cur?" on":"");b.textContent=l;b.onclick=()=>fn(v);el.appendChild(b)})}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function renderRes(){
+ const types=["All",...new Set(RESOURCES.map(r=>r.type))];
+ chips($("types"),types.map(t=>[t,t]),typeF,v=>{typeF=v;renderRes()});
+ const q=$("q").value.toLowerCase();
+ $("resList").innerHTML=RESOURCES.filter(r=>(typeF==="All"||r.type===typeF)&&(r.t+r.d+r.type).toLowerCase().includes(q))
+  .map(r=>`<a class="card res" href="${esc(r.u)}" target="_blank" rel="noopener"><span class="tag">${esc(r.type)}</span><br><b>${esc(r.t)}</b><p>${esc(r.d)}</p></a>`).join("")||'<p class="sub">No matches.</p>';
+}
+function renderTopics(){
+ chips($("papers"),[[0,"All papers"],[1,"Paper 1"],[2,"Paper 2"],[3,"Paper 3"]],paperF,v=>{paperF=v;renderTopics();renderNotes()});
+ const q=$("q").value.toLowerCase();
+ $("topicList").innerHTML=TOPICS.filter(([n,t,p])=>(!paperF||p===paperF)&&t.toLowerCase().includes(q)).map(([n,t,p])=>{
+  const d=S.done.includes(n);
+  return `<label class="card topic${d?" done":""}"><input type="checkbox" data-n="${n}"${d?" checked":""}><span><span class="t">${n}. ${esc(t)}</span><br><span class="tag">Paper ${p}: ${PAPERS[p]}</span></span></label>`}).join("");
+ document.querySelectorAll("#topicList input").forEach(i=>i.onchange=()=>{
+  const n=+i.dataset.n;S.done=i.checked?[...S.done,n]:S.done.filter(x=>x!==n);save();renderTopics()});
+ const pct=Math.round(S.done.length/TOPICS.length*100);
+ $("pct").textContent=pct+"%";$("fill").style.width=pct+"%";
+}
+function renderDays(){
+ if(!S.exam){$("days").textContent="Set date";return}
+ const d=Math.ceil((new Date(S.exam+"T00:00")-new Date().setHours(0,0,0,0))/864e5);
+ $("days").textContent=d>0?d+" days":d===0?"Today!":"Exam passed";
+}
+$("exam").value=S.exam;
+function renderPlan(){
+ let cur=0;
+ if(S.exam){const d=Math.ceil((new Date(S.exam+"T00:00")-new Date().setHours(0,0,0,0))/864e5);
+  if(d>0)cur=Math.min(12,Math.max(1,12-Math.ceil(d/7)+1))}
+ $("planList").innerHTML=PLAN.map(([t,d],i)=>{const w=i+1,k=S.weeks.includes(w);
+  return `<label class="card task${k?" done":""}${w===cur?" cur":""}"><input type="checkbox" data-w="${w}"${k?" checked":""}><span><span class="tag">Week ${w}${w===cur?" · this week":""}</span><br><b>${esc(t)}</b><p>${esc(d)}</p></span></label>`}).join("");
+ document.querySelectorAll("#planList input").forEach(i=>i.onchange=()=>{
+  const n=+i.dataset.w;S.weeks=i.checked?[...S.weeks,n]:S.weeks.filter(x=>x!==n);save();renderPlan()});
+}
+$("exam").onchange=e=>{S.exam=e.target.value;save();renderDays();renderPlan()};
+const li=a=>a.map(x=>`<li>${esc(x)}</li>`).join("");
+const keysOf=n=>(KEYS[n]||"").split("|").filter(Boolean).map(x=>x.split("="));
+const qsOf=n=>((QS[n]||"")+"||"+(QS2[n]||"")).split("||").filter(Boolean).map(q=>q.split("~"));
+function noteCard(n,t,p){
+ const q=qsOf(n).map((x,i)=>`<p><b>Q${i+1}</b> (${x[1]} marks) ${esc(x[0])}</p><details><summary>Mark scheme</summary><ul>${li(x[2].split(";"))}</ul></details>`).join("");
+ return `<details class="card"><summary>${n}. ${esc(t)} <span class="tag">Paper ${p}</span></summary><h4>Key facts</h4><ul>${li(NOTES[n].split("|"))}</ul><h4>In more detail</h4><ul>${li(mo(n)[0].split("|"))}</ul><h4>Key terms</h4><dl>${keysOf(n).map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join("")}</dl><h4>Exam tips</h4><ul>${li(mo(n)[1].split("|"))}</ul><h4>Common mistakes</h4><ul>${li(mo(n)[2].split("|"))}</ul><h4>Practice questions</h4>${q}<p><button class="chip" data-deck="${n}">Open slides</button></p></details>`;
+}
+let DK=[],di=0;
+function build(n){
+ const t=TOPICS.find(x=>x[0]===n)[1],N=NOTES[n].split("|"),s=[{h:t,l:["Topic "+n+" · IGCSE ICT revision","Goal: explain every point in this deck in your own words."]}];
+ for(let i=0;i<N.length;i+=2)s.push({h:"Key points",l:N.slice(i,i+2)});
+ mo(n)[0].split("|").forEach((x,i)=>s.push({h:"In more detail "+(i+1),l:[x]}));s.push({h:"Exam tips",l:mo(n)[1].split("|").concat(["Common mistake: "+mo(n)[2]])});s.push({h:"Key terms",l:keysOf(n).map(([a,b])=>a+": "+b)});
+ qsOf(n).forEach((x,i)=>{s.push({h:`Exam question ${i+1} (${x[1]} marks)`,l:[x[0]]});s.push({h:"Mark scheme "+(i+1),l:x[2].split(";")})});
+ s.push({h:"Recap",l:["Cover the key points and explain them aloud.","Tick this topic in your checklist."]});
+ return s;
+}
+function showDeck(){
+ const s=DK[di];$("dkc").textContent=`Slide ${di+1} of ${DK.length}`;$("dkh").textContent=s.h;
+ $("dkb").innerHTML="<ul>"+li(s.l)+"</ul>";$("dkp").disabled=di===0;$("dkn").disabled=di===DK.length-1;
+}
+function step(d){const k=di+d;if(k>=0&&k<DK.length){di=k;showDeck()}}
+$("notesList").onclick=e=>{const b=e.target.closest("[data-deck]");if(b){DK=build(+b.dataset.deck);di=0;$("deck").hidden=false;showDeck()}};
+$("dkp").onclick=()=>step(-1);$("dkn").onclick=()=>step(1);$("dkx").onclick=()=>{$("deck").hidden=true};
+document.onkeydown=e=>{if($("deck").hidden)return;if(e.key==="ArrowRight")step(1);if(e.key==="ArrowLeft")step(-1);if(e.key==="Escape")$("deck").hidden=true};
+function renderNotes(){
+ const q=$("q").value.toLowerCase();
+ $("notesList").innerHTML=TOPICS.filter(([n,t,p])=>(!paperF||p===paperF)&&(t+NOTES[n]).toLowerCase().includes(q)).map(([n,t,p])=>
+  `${noteCard(n,t,p)}`).join("")||'<p class="sub">No matches.</p>';
+}
+function renderTasks(){
+ const sws=["All",...new Set(TASKS.map(t=>t.sw))];
+ chips($("sws"),sws.map(s=>[s,s]),swF,v=>{swF=v;renderTasks()});
+ const q=$("q").value.toLowerCase();
+ $("taskList").innerHTML=TASKS.filter(t=>(swF==="All"||t.sw===swF)&&(t.t+t.d+t.sw).toLowerCase().includes(q)).map(t=>{
+  const d=S.tasks.includes(t.id);
+  return `<label class="card task${d?" done":""}"><input type="checkbox" data-id="${t.id}"${d?" checked":""}><span><span class="tag">${t.sw} · ${t.lv}</span><br><b>${esc(t.t)}</b><p>${esc(t.d)}</p></span></label>`}).join("")||'<p class="sub">No matches.</p>';
+ document.querySelectorAll("#taskList input").forEach(i=>i.onchange=()=>{
+  const n=+i.dataset.id;S.tasks=i.checked?[...S.tasks,n]:S.tasks.filter(x=>x!==n);save();renderTasks()});
+}
+$("q").oninput=()=>{renderRes();renderTopics();renderNotes();renderTasks()};
+$("reset").onclick=()=>{if(confirm("Clear your ticked topics and tasks?")){S.done=[];S.tasks=[];S.weeks=[];save();renderTopics();renderTasks();renderPlan()}};
+renderRes();renderTopics();renderNotes();renderTasks();renderDays();renderPlan();
+</script>
+</body>
+</html>
